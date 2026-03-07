@@ -1,11 +1,10 @@
-
 name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
   workflow_dispatch:
 
@@ -17,8 +16,10 @@ jobs:
       image: node:20
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+
+      - name: install deps
+        run: npm install
 
       - name: Build vite app
         run: npm run build
