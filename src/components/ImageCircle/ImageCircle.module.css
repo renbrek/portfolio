@@ -1,0 +1,42 @@
+.circle {
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  width: 160px;
+  aspect-ratio: 1;
+  border: 10px solid white;
+  border-radius: 50%;
+  z-index: 1;
+  /* overflow: hidden; */
+}
+
+.image {
+  /* object-fit: cover; */
+  width: 100%;
+  height: 100%;
+  background-color: #0f0f0f;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-70%, -50%) scale(1.8);
+  border-radius: 50%;
+}
+
+.imageWrapper {
+  border: 2px solid #f2f4f8;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.shadow {
+  filter: opacity(0.75);
+}
