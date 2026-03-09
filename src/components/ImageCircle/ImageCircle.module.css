@@ -1,6 +1,5 @@
 .circle {
     user-select: none;
-    cursor: pointer;
     display: flex;
     position: relative;
     justify-content: center;
@@ -24,6 +23,7 @@
 }
 
 .imageWrapper {
+    cursor: pointer;
     border: 2px solid #f2f4f8;
     overflow: hidden;
     width: 100%;

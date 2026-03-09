@@ -28,18 +28,17 @@ export function ImageCircle() {
   };
 
   return (
-    <div
-      ref={scope}
-      className={s.circle}
-      onClick={() => {
-        audio.currentTime = 0;
-        audio.play();
+    <div ref={scope} className={s.circle}>
+      <div
+        className={s.imageWrapper}
+        onClick={() => {
+          audio.currentTime = 0;
+          audio.play();
 
-        audio.onplay = () => setSpeed(10);
-        audio.onended = () => setSpeed(1);
-      }}
-    >
-      <div className={s.imageWrapper}>
+          audio.onplay = () => setSpeed(10);
+          audio.onended = () => setSpeed(1);
+        }}
+      >
         <img className={s.image} src={selfImage} alt="img" />
       </div>
 
