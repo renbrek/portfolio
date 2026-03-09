@@ -2,7 +2,7 @@ import s from "./ImageCircle.module.css";
 import selfImage from "../../assets/images/self.jpg";
 import blow from "../../assets/audio/blowing.wav";
 import { useState } from "react";
-import { motion, useAnimationControls } from "motion/react";
+import { motion } from "motion/react";
 
 const paths = [
   "M53.6,-62.1C68.3,-51.4,78.6,-33.5,78.1,-16.7C77.6,0.2,66.4,16,55.7,29.8C44.9,43.6,34.7,55.3,21.2,61.8C7.7,68.3,-9.1,69.7,-25.5,65.6C-41.9,61.6,-57.9,52.1,-62.5,38.7C-67,25.3,-60.1,8,-55.2,-8C-50.3,-24,-47.4,-38.6,-38.6,-50.4C-29.7,-62.1,-14.9,-71.1,2.3,-73.8C19.4,-76.5,38.8,-72.9,53.6,-62.1Z",
@@ -32,7 +32,6 @@ const paths3 = [
 export function ImageCircle() {
   const audio = new Audio(blow);
 
-  useAnimationControls
   const [animationMultiplier, setAnimationMultiplier] = useState(1);
 
   return (
