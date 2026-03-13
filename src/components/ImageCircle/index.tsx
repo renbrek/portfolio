@@ -6,7 +6,27 @@ import { motion, useAnimate } from "motion/react";
 import { paths, paths2, paths3 } from "./utils";
 
 export function ImageCircle() {
-  const audio = useRef(new Audio(blow)).current;
+  const ctxRef = useRef<AudioContext | null>(null);
+  const bufferRef = useRef<AudioBuffer | null>(null);
+
+  useEffect(() => {
+    const ctx = new AudioContext();
+    ctxRef.current = ctx;
+
+    const loadBlow = async () => {
+      try {
+        const res = await fetch(blow);
+        const audioData = await res.arrayBuffer();
+        const buffer = await ctx.decodeAudioData(audioData);
+
+        bufferRef.current = buffer;
+      } catch (e) {
+        console.error("Audio loading failed", e);
+      }
+    };
+
+    loadBlow();
+  }, []);
 
   const [scope, animate] = useAnimate();
   const controls = useRef<ReturnType<typeof animate>[]>([]);
@@ -31,12 +51,25 @@ export function ImageCircle() {
     <div ref={scope} className={s.circle}>
       <div
         className={s.imageWrapper}
-        onClick={() => {
-          audio.currentTime = 0;
-          audio.play();
+        onClick={async () => {
+          const ctx = ctxRef.current;
+          const buffer = bufferRef.current;
 
-          audio.onplay = () => setSpeed(10);
-          audio.onended = () => setSpeed(1);
+          if (!ctx || !buffer) return;
+
+          if (ctx.state === "suspended") {
+            await ctx.resume();
+          }
+
+          const source = ctx.createBufferSource();
+          source.buffer = buffer;
+          source.connect(ctx.destination);
+
+          source.start(0);
+
+          setSpeed(10);
+
+          source.onended = () => setSpeed(1);
         }}
       >
         <img className={s.image} src={selfImage} alt="img" />
