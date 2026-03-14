@@ -4,10 +4,10 @@ import blow from "../../assets/audio/blowing.wav";
 import { useEffect, useRef } from "react";
 import { motion, useAnimate } from "motion/react";
 import { paths, paths2, paths3 } from "./utils";
+import { useSoundEffect } from "../../hooks/useSoundEffect";
 
 export function ImageCircle() {
-  const audio = useRef(new Audio(blow)).current;
-
+  const { play } = useSoundEffect(blow);
   const [scope, animate] = useAnimate();
   const controls = useRef<ReturnType<typeof animate>[]>([]);
 
@@ -27,18 +27,14 @@ export function ImageCircle() {
     controls.current.forEach((c) => (c.speed = speed));
   };
 
+  const handleClick = async () => {
+    setSpeed(10);
+    play({ onended: () => setSpeed(1) });
+  };
+
   return (
     <div ref={scope} className={s.circle}>
-      <div
-        className={s.imageWrapper}
-        onClick={() => {
-          audio.currentTime = 0;
-          audio.play();
-
-          audio.onplay = () => setSpeed(10);
-          audio.onended = () => setSpeed(1);
-        }}
-      >
+      <div className={s.imageWrapper} onClick={handleClick}>
         <img className={s.image} src={selfImage} alt="img" />
       </div>
 
