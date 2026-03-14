@@ -14,7 +14,6 @@ export const useSoundEffect = (src: string) => {
 
   useEffect(() => {
     const ctx = new AudioContext();
-    ctxRef.current = ctx;
 
     const loadSoundEffect = async () => {
       try {
@@ -36,6 +35,9 @@ export const useSoundEffect = (src: string) => {
   }, [src]);
 
   const play = async (options: PlayOptions) => {
+    if (!ctxRef.current) {
+      ctxRef.current = new AudioContext();
+    }
     const ctx = ctxRef.current;
     const buffer = bufferRef.current;
 
@@ -51,8 +53,8 @@ export const useSoundEffect = (src: string) => {
       oldSource.stop();
     }
 
-    sourceRef.current = ctx.createBufferSource();
-    const source = sourceRef.current;
+    const source = ctx.createBufferSource();
+    sourceRef.current = source;
 
     if (!source.buffer) {
       source.buffer = buffer;
