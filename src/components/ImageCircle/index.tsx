@@ -8,6 +8,7 @@ import { paths, paths2, paths3 } from "./utils";
 export function ImageCircle() {
   const ctxRef = useRef<AudioContext | null>(null);
   const bufferRef = useRef<AudioBuffer | null>(null);
+  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
 
   useEffect(() => {
     const ctx = new AudioContext();
@@ -26,6 +27,10 @@ export function ImageCircle() {
     };
 
     loadBlow();
+
+    return () => {
+      ctx.close();
+    };
   }, []);
 
   const [scope, animate] = useAnimate();
@@ -47,31 +52,41 @@ export function ImageCircle() {
     controls.current.forEach((c) => (c.speed = speed));
   };
 
+  const handleClick = async () => {
+    const ctx = ctxRef.current;
+    const buffer = bufferRef.current;
+
+    if (!ctx || !buffer) return;
+
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+
+    const oldSource = sourceRef.current;
+    if (oldSource) {
+      oldSource.onended = null;
+      oldSource.stop();
+    }
+
+    sourceRef.current = ctx.createBufferSource();
+    const source = sourceRef.current;
+
+    if (!source.buffer) {
+      source.buffer = buffer;
+    }
+
+    source.connect(ctx.destination);
+
+    source.start(0);
+
+    setSpeed(10);
+
+    source.onended = () => setSpeed(1);
+  };
+
   return (
     <div ref={scope} className={s.circle}>
-      <div
-        className={s.imageWrapper}
-        onClick={async () => {
-          const ctx = ctxRef.current;
-          const buffer = bufferRef.current;
-
-          if (!ctx || !buffer) return;
-
-          if (ctx.state === "suspended") {
-            await ctx.resume();
-          }
-
-          const source = ctx.createBufferSource();
-          source.buffer = buffer;
-          source.connect(ctx.destination);
-
-          source.start(0);
-
-          setSpeed(10);
-
-          source.onended = () => setSpeed(1);
-        }}
-      >
+      <div className={s.imageWrapper} onClick={handleClick}>
         <img className={s.image} src={selfImage} alt="img" />
       </div>
 
