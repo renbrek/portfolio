@@ -7,7 +7,7 @@ import { paths, paths2, paths3 } from "./utils";
 import { useSoundEffect } from "../../hooks/useSoundEffect";
 
 export function ImageCircle() {
-  const { ctxRef, bufferRef, sourceRef } = useSoundEffect(blow);
+  const { play } = useSoundEffect(blow);
   const [scope, animate] = useAnimate();
   const controls = useRef<ReturnType<typeof animate>[]>([]);
 
@@ -28,35 +28,8 @@ export function ImageCircle() {
   };
 
   const handleClick = async () => {
-    const ctx = ctxRef.current;
-    const buffer = bufferRef.current;
-
-    if (!ctx || !buffer) return;
-
-    if (ctx.state === "suspended") {
-      await ctx.resume();
-    }
-
-    const oldSource = sourceRef.current;
-    if (oldSource) {
-      oldSource.onended = null;
-      oldSource.stop();
-    }
-
-    sourceRef.current = ctx.createBufferSource();
-    const source = sourceRef.current;
-
-    if (!source.buffer) {
-      source.buffer = buffer;
-    }
-
-    source.connect(ctx.destination);
-
-    source.start(0);
-
     setSpeed(10);
-
-    source.onended = () => setSpeed(1);
+    play({ onended: () => setSpeed(1) });
   };
 
   return (

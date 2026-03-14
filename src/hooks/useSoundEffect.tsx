@@ -1,5 +1,12 @@
 import { useEffect, useRef } from "react";
 
+interface PlayOptions {
+  /**
+   * Called when the sound playback ends.
+   */
+  onended: () => void;
+}
+
 export const useSoundEffect = (src: string) => {
   const ctxRef = useRef<AudioContext | null>(null);
   const bufferRef = useRef<AudioBuffer | null>(null);
@@ -28,5 +35,34 @@ export const useSoundEffect = (src: string) => {
     };
   }, [src]);
 
-  return { ctxRef, bufferRef, sourceRef };
+  const play = async (options: PlayOptions) => {
+    const ctx = ctxRef.current;
+    const buffer = bufferRef.current;
+
+    if (!ctx || !buffer) return;
+
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+
+    const oldSource = sourceRef.current;
+    if (oldSource) {
+      oldSource.onended = null;
+      oldSource.stop();
+    }
+
+    sourceRef.current = ctx.createBufferSource();
+    const source = sourceRef.current;
+
+    if (!source.buffer) {
+      source.buffer = buffer;
+    }
+
+    source.connect(ctx.destination);
+
+    source.start(0);
+    source.onended = options.onended;
+  };
+
+  return { play, ctxRef, bufferRef, sourceRef };
 };
